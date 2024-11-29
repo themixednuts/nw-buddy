@@ -22,7 +22,7 @@ const isPtr = branchName === 'ptr' || branchName.startsWith('ptr-')
 const isCI = !!process.env.CI
 const path = require('path')
 const packageVersion = require(path.resolve(process.cwd(), 'package.json')).version
-const nwWorkspace =  process.env.NW_WORKSPACE || (isPtr ? 'PTR' : 'LIVE')
+const nwWorkspace = process.env.NW_WORKSPACE || (isPtr ? 'PTR' : 'LIVE')
 
 const config = {
   IS_CI: isCI,
@@ -38,6 +38,8 @@ const config = {
   COMMIT_HASH: commitHash,
   NW_BADGE: env('NW_BADGE', nwWorkspace, ''),
   NW_WATERMARK: env('NW_WATERMARK', nwWorkspace, ''),
+  SUPABASE_URL: process.env.SUPABASE_URL,
+  SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
 }
 
 function env(name, workspace, fallback) {

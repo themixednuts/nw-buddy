@@ -72,6 +72,7 @@
     "@angular-devkit/architect": "0.1802.3",
     "@angular-devkit/build-angular": "18.2.3",
     "@angular-devkit/core": "18.2.3",
+    "@angular-eslint/schematics": "18.4.2",
     "@angular/animations": "18.2.3",
     "@angular/cdk": "18.2.3",
     "@angular/cli": "18.2.3",
@@ -85,7 +86,7 @@
     "@angular/platform-browser-dynamic": "18.2.3",
     "@angular/platform-server": "18.2.3",
     "@angular/router": "18.2.3",
-    "@angular/ssr": "^18.2.3",
+    "@angular/ssr": "^18.2.12",
     "@aws-sdk/client-s3": "3.606.0",
     "@aws-sdk/lib-storage": "3.606.0",
     "@capacitor/android": "6.1.2",
@@ -104,19 +105,19 @@
     "@ngx-translate/core": "15.0.0",
     "@playwright/test": "1.46.0",
     "@popperjs/core": "2.11.8",
-    "@storybook/addon-a11y": "^8.2.9",
-    "@storybook/addon-backgrounds": "^8.2.9",
-    "@storybook/addon-essentials": "^8.2.9",
-    "@storybook/addon-interactions": "^8.2.9",
-    "@storybook/addon-links": "^8.2.9",
-    "@storybook/addon-storysource": "^8.2.9",
-    "@storybook/addon-themes": "^8.2.9",
-    "@storybook/angular": "^8.2.9",
-    "@storybook/blocks": "^8.2.9",
-    "@storybook/manager-api": "^8.2.9",
-    "@storybook/preview-api": "^8.2.9",
-    "@storybook/theming": "^8.2.9",
-    "@storybook/types": "^8.2.9",
+    "@storybook/addon-a11y": "^8.4.5",
+    "@storybook/addon-backgrounds": "^8.4.5",
+    "@storybook/addon-essentials": "^8.4.5",
+    "@storybook/addon-interactions": "^8.4.5",
+    "@storybook/addon-links": "^8.4.5",
+    "@storybook/addon-storysource": "^8.4.5",
+    "@storybook/addon-themes": "^8.4.5",
+    "@storybook/angular": "^8.4.5",
+    "@storybook/blocks": "^8.4.5",
+    "@storybook/manager-api": "^8.4.5",
+    "@storybook/preview-api": "^8.4.5",
+    "@storybook/theming": "^8.4.5",
+    "@storybook/types": "^8.4.5",
     "@tailwindcss/container-queries": "0.1.1",
     "@tailwindcss/typography": "0.5.13",
     "@tauri-apps/api": "1.6.0",
@@ -204,8 +205,8 @@
     "rimraf": "5.0.7",
     "rxjs": "7.8.1",
     "sharp": "0.33.4",
+    "supabase": "1.223.10",
     "swiper": "11.1.4",
-    "tailwind": "4.0.0",
     "tailwind-merge": "2.3.0",
     "tailwindcss": "3.4.4",
     "tesseract.js": "5.1.0",
@@ -221,7 +222,7 @@
     "wrangler": "3.62.0",
     "yauzl": "3.1.3",
     "zod": "3.23.8",
-    "zone.js": "~0.14.7"
+    "zone.js": "~0.14.10"
   },
   "engines": {
     "node": ">=22"
@@ -235,5 +236,8 @@
   "bugs": {
     "url": "https://github.com/giniedp/nw-buddy/issues"
   },
-  "packageManager": "pnpm@9.1.2"
+  "packageManager": "pnpm@9.1.2",
+  "dependencies": {
+    "@supabase/supabase-js": "2.46.2"
+  }
 }

@@ -1,9 +1,10 @@
-export type EnvVars = typeof env
+export type EnvVars = typeof env;
+
 export const env = {
   /**
    * The build version string
    */
-  version: 'v0',
+  version: "v0",
   /**
    * Whether the environment is PTR
    * @remarks
@@ -13,23 +14,23 @@ export const env = {
   /**
    * Floating badge text above Site name
    */
-  badge: '',
+  badge: "",
   /**
    * nw-data workspace folder
    */
-  workspace: 'live',
+  workspace: "live",
   /**
    * The branch name (used to determine cdn asset path)
    */
-  branchname: 'live',
+  branchname: "live",
   /**
    * The path where models are located
    */
-  cdnUrl: 'https://cdn.nw-buddy.de',
+  cdnUrl: "https://cdn.nw-buddy.de",
   /**
    * The deploy URL for assets and resources
    */
-  deployUrl: '/',
+  deployUrl: "/",
   /**
    * Whether nwdb.info tooltips should be disabled
    */
@@ -37,5 +38,7 @@ export const env = {
   /**
    * A watermark image URL
    */
-  watermarkImageUrl: '',
-}
+  watermarkImageUrl: "",
+  supabaseUrl: "",
+  supabaseAnonKey: "",
+};
