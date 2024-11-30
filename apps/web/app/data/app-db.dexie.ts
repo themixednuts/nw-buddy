@@ -12,6 +12,7 @@ import {
   DBT_TABLE_PRESETS,
   DBT_TABLE_STATES,
 } from './constants'
+import { SyncService } from '~/sync/sync.service'
 
 export class AppDbDexie extends AppDb {
   private tables: Record<string, AppDbDexieTable<any>> = {}
@@ -61,10 +62,12 @@ const createId = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz-_', 16)
 export class AppDbDexieTable<T extends { id: string }> extends AppDbTable<T> {
   public db: AppDbDexie
   private table: Table<T>
+  private sync = new SyncService()
   public constructor(db: AppDbDexie, name: string) {
     super()
     this.db = db
     this.table = db.dexie.table(name)
+    this.sync.sync(this.table)
   }
 
   public async tx<R>(fn: () => Promise<R>): Promise<R> {
@@ -76,7 +79,10 @@ export class AppDbDexieTable<T extends { id: string }> extends AppDbTable<T> {
   }
 
   public async keys(): Promise<string[]> {
-    return this.table.toCollection().keys().then((list) => list as string[])
+    return this.table
+      .toCollection()
+      .keys()
+      .then((list) => list as string[])
   }
 
   public list(): Promise<T[]> {
@@ -84,11 +90,15 @@ export class AppDbDexieTable<T extends { id: string }> extends AppDbTable<T> {
   }
 
   public async create(record: Partial<T>): Promise<T> {
+    const now = new Date()
     record = {
       ...record,
       id: record.id || createId(),
+      created_at: now,
+      updated_at: now,
     }
     const id = await this.table.add(record as T, record.id)
+    await this.sync.onInsert(this.table.name, record)
     return this.read(id as any)
   }
 
@@ -97,11 +107,18 @@ export class AppDbDexieTable<T extends { id: string }> extends AppDbTable<T> {
   }
 
   public async update(id: string, record: Partial<T>): Promise<T> {
+    const now = new Date()
+    record = {
+      ...record,
+      updated_at: now,
+    }
+    await this.sync.onUpdate(this.table.name, record)
     await this.table.update(id, record)
     return this.read(id)
   }
 
   public async destroy(id: string | string[]): Promise<void> {
+    await this.sync.onDelete(this.table.name, id)
     return this.table.delete(id)
   }
 

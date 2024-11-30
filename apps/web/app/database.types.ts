@@ -34,6 +34,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      gearsets: {
+        Row: {
+          attrs: Json | null
+          created_at: string | null
+          deleted_at: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          magnify: Json | null
+          name: string
+          skills: Json | null
+          slots: Json | null
+          tags: Json | null
+          updated_at: string | null
+          user_id: string | null
+          visibility: Database["public"]["Enums"]["visibility"] | null
+        }
+        Insert: {
+          attrs?: Json | null
+          created_at?: string | null
+          deleted_at?: string | null
+          description?: string | null
+          id: string
+          image_url?: string | null
+          magnify?: Json | null
+          name: string
+          skills?: Json | null
+          slots?: Json | null
+          tags?: Json | null
+          updated_at?: string | null
+          user_id?: string | null
+          visibility?: Database["public"]["Enums"]["visibility"] | null
+        }
+        Update: {
+          attrs?: Json | null
+          created_at?: string | null
+          deleted_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          magnify?: Json | null
+          name?: string
+          skills?: Json | null
+          slots?: Json | null
+          tags?: Json | null
+          updated_at?: string | null
+          user_id?: string | null
+          visibility?: Database["public"]["Enums"]["visibility"] | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -69,7 +120,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      visibility: "public" | "private"
     }
     CompositeTypes: {
       [_ in never]: never

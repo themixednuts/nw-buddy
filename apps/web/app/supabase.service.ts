@@ -1,97 +1,103 @@
-import { Injectable, OnInit, signal } from "@angular/core";
-import {
-  AuthChangeEvent,
-  AuthSession,
-  createClient,
-  Session,
-  SupabaseClient,
-  User,
-} from "@supabase/supabase-js";
-import { environment } from "../environments/environment";
-import { Database } from "./database.types";
+import { Injectable, OnInit, signal } from '@angular/core'
+import { AuthChangeEvent, AuthSession, createClient, Session, SupabaseClient, User } from '@supabase/supabase-js'
+import { environment } from '../environments/environment'
+import type { Database } from './database.types'
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class SupabaseService {
-  private supabase: SupabaseClient<Database>;
-  session = signal<AuthSession | null>(null);
+  private static client: SupabaseClient<Database> = createClient(environment.supabaseUrl, environment.supabaseAnonKey)
+  session = signal<AuthSession | null>(null)
 
   constructor() {
-    this.supabase = createClient(
-      environment.supabaseUrl,
-      environment.supabaseAnonKey,
-    );
+    SupabaseService.client.auth
+      .getSession()
+      .then(({ data }) =>
+        SupabaseService.client.auth.refreshSession(data.session).then(({ data }) => this.session.set(data.session)),
+      )
 
-    this.bindSession();
+    this.bindSession()
+  }
+
+  get handle() {
+    return SupabaseService.client
   }
 
   getAvatarUrl() {
-    const iden = this.session()?.user.identities[0].identity_data;
-    return iden["avatar_url"];
+    const iden = this.session()?.user.identities[0].identity_data
+    return iden['avatar_url']
   }
 
   getUsername() {
-    const iden = this.session()?.user.identities[0].identity_data;
-    return iden["full_name"];
+    const iden = this.session()?.user.identities[0].identity_data
+    return iden['full_name']
   }
 
-  protected async refreshSession() {
-    // console.log(this.supabase.auth.getSession());
-  }
   private async bindSession() {
     this.authChanges((event, session) => {
-      if (event == "SIGNED_IN") {
-        this.session.set(session);
+      if (event == 'SIGNED_IN') {
+        this.session.set(session)
       }
-      if (event == "SIGNED_OUT") {
-        this.session.set(null);
+      if (event == 'SIGNED_OUT') {
+        this.session.set(null)
       }
-    });
+    })
   }
 
   async profile(user: User) {
-    const { data, error } = await this.supabase
-      .from("profiles")
+    const { error } = await SupabaseService.client
+      .from('profiles')
       .select(`username, avatar_url`)
-      .eq("id", user.id)
+      .eq('id', user.id)
       .limit(1)
-      .single();
-
-    return data;
+      .single()
   }
 
-  authChanges(
-    callback: (event: AuthChangeEvent, session: Session | null) => void,
-  ) {
-    return this.supabase.auth.onAuthStateChange(callback);
+  authChanges(callback: (event: AuthChangeEvent, session: Session | null) => void) {
+    return SupabaseService.client.auth.onAuthStateChange(callback)
   }
 
   async signIn() {
-    const response = await this.supabase.auth.signInWithOAuth({
-      provider: "discord",
-    });
-    return response;
+    const {
+      data: { session },
+      error,
+    } = await SupabaseService.client.auth.getSession()
+    if (error || !session) {
+      const response = await SupabaseService.client.auth.signInWithOAuth({
+        provider: 'discord',
+        options: {
+          redirectTo: window ? window.location.href : null,
+        },
+      })
+      return
+    }
+
+    const {
+      data: { session: refreshedSession },
+    } = await SupabaseService.client.auth.refreshSession(session)
+
+    this.session.set(refreshedSession)
   }
 
   async signOut() {
-    await this.supabase.auth.signOut();
+    await SupabaseService.client.auth.signOut()
   }
 
   updateProfile(profile: any) {
     const update = {
       ...profile,
       updated_at: new Date(),
-    };
+    }
 
-    return this.supabase.from("profiles").upsert(update);
+    return SupabaseService.client.from('profiles').upsert(update)
   }
 
   downLoadImage(path: string) {
-    return this.supabase.storage.from("avatars").download(path);
+    return SupabaseService.client.storage.from('avatars').download(path)
   }
 
   uploadAvatar(filePath: string, file: File) {
-    return this.supabase.storage.from("avatars").upload(filePath, file);
+    return SupabaseService.client.storage.from('avatars').upload(filePath, file)
   }
 }
