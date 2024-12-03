@@ -13,7 +13,6 @@ CREATE TABLE IF NOT EXISTS "gearsets" (
   "visibility" VISIBILITY DEFAULT 'public',
   "created_at" TIMESTAMPTZ DEFAULT NOW(),
   "updated_at" timestamptz,
-  "deleted_at" timestamptz,
   UNIQUE("id", "user_id")
 );
 

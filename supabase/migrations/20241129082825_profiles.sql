@@ -5,7 +5,6 @@ CREATE TABLE "profiles" (
   "avatar_url" TEXT,
   "created_at" timestamptz DEFAULT now(),
   "updated_at" timestamptz,
-  "deleted_at" timestamptz
 );
 
 ---------------------------------         ###  ROW LEVEL SECURITY  ###     -------------------------------------

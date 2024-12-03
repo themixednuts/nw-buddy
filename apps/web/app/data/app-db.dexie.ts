@@ -1,5 +1,5 @@
 import { Dexie, liveQuery, PromiseExtended, Table } from 'dexie'
-import { nanoid } from 'nanoid/non-secure'
+import { nanoid } from 'nanoid'
 import { defer, isObservable, of, Observable as RxObservable, switchMap } from 'rxjs'
 
 import { AppDb, AppDbTable } from './app-db'
@@ -105,7 +105,6 @@ export class AppDbDexieTable<T extends { id: string }, S extends SyncService = n
   }
 
   public async update(id: string, record: Partial<T>): Promise<T> {
-    console.log('UPDATING')
     const now = new Date()
     record = {
       ...record,
@@ -122,7 +121,6 @@ export class AppDbDexieTable<T extends { id: string }, S extends SyncService = n
   }
 
   public async upsert(record: T): Promise<T> {
-    console.log('UPSERTING')
     if (record.id) {
       return this.update(record.id, record)
     }
