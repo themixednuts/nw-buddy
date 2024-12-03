@@ -69,7 +69,7 @@ export class GearsetsSharePageComponent {
       .result$.pipe(filter((it) => !!it))
       .pipe(
         switchMap((name) => {
-          return this.gearsetDb.create({
+          return this.gearsetDb.insert({
             ...record,
             name: name,
           })

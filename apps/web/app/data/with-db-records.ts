@@ -3,13 +3,14 @@ import { patchState, signalStoreFeature, withComputed, withMethods, withState } 
 import { rxMethod } from '@ngrx/signals/rxjs-interop'
 import { map, pipe, switchMap } from 'rxjs'
 import { DBTable } from './db-table'
+import { SyncService } from '~/sync/sync.service'
 
 export interface WithDbRecordsState<T extends { id: string }> {
   records: T[]
   recordsAreLoaded: boolean
 }
 
-export function withDbRecords<T extends { id: string }>(table: Type<DBTable<T>>) {
+export function withDbRecords<T extends { id: string }, S extends SyncService = null>(table: Type<DBTable<T, S>>) {
   return signalStoreFeature(
     withState<WithDbRecordsState<T>>({
       records: null,
@@ -30,19 +31,19 @@ export function withDbRecords<T extends { id: string }>(table: Type<DBTable<T>>)
           ),
         ),
         createRecord: async (record: T) => {
-          return db.create(record)
+          return db.insert(record)
         },
         updateRecord: async (record: T) => {
           return db.update(record.id, record)
         },
         destroyRecord: async (id: string | string[]) => {
-          return db.destroy(id)
+          return db.delete(id)
         },
       }
     }),
     withComputed(({ records }) => {
       return {
-        filteredRecords: computed(() => records())
+        filteredRecords: computed(() => records()),
       }
     }),
   )

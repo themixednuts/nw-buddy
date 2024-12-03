@@ -22,7 +22,7 @@ export function withItemInstanceMethods() {
           })
         },
         destroyItemInstance() {
-          return itemDB.destroy(itemInstance().id)
+          return itemDB.delete(itemInstance().id)
         },
       }
     }),

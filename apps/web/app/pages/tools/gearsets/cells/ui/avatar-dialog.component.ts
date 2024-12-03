@@ -130,7 +130,7 @@ export class AvatarDialogComponent extends ComponentStore<AvatarDialogState> imp
       },
     })
       .result$.pipe(filter((it) => !!it))
-      .pipe(switchMap(() => this.imagesDb.destroy(imageId)))
+      .pipe(switchMap(() => this.imagesDb.delete(imageId)))
       .subscribe(() => {
         this.patchState({ imageId: null })
         this.modalRef.close({ imageId: null })
@@ -173,9 +173,9 @@ export class AvatarDialogComponent extends ComponentStore<AvatarDialogState> imp
     const buffer = await file.arrayBuffer()
     const result = await this.imagesDb.tx(async () => {
       if (oldId) {
-        await this.imagesDb.destroy(oldId).catch(() => null)
+        await this.imagesDb.delete(oldId).catch(() => null)
       }
-      return this.imagesDb.create({
+      return this.imagesDb.insert({
         id: null,
         type: file.type,
         data: buffer,

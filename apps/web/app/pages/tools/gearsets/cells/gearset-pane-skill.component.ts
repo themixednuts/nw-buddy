@@ -162,7 +162,7 @@ export class GearsetPaneSkillComponent {
       injector: this.injector,
     }).then((ids: string[]) => {
       const id = ids?.[0]
-      return id ? this.db.read(id) : null
+      return id ? this.db.select(id) : null
     })
     if (!result) {
       return

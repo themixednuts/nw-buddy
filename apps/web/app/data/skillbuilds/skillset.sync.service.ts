@@ -1,6 +1,6 @@
 import { effect, Injectable } from '@angular/core'
 import { Table } from 'dexie'
-import { AppDbRecord, AppDbTable } from '~/data/app-db'
+import { AppDbRecord } from '~/data/app-db'
 import { TablesInsert, TablesUpdate } from '~/database.types'
 import { SyncService } from '~/sync/sync.service'
 
@@ -12,15 +12,15 @@ import { SyncService } from '~/sync/sync.service'
 @Injectable({
   providedIn: 'root',
 })
-export class GearsetSyncService extends SyncService {
-  protected override readonly name = 'gearsets' as const
+export class SkillsetSyncService extends SyncService {
+  protected override readonly name = 'skillsets' as const
 
   constructor() {
     super()
-    console.log('GEARSET SYNC CONSTRUCTOR')
+    console.log('SKILLSET SYNC CONSTRUCTOR')
   }
   async sync<T extends { id: string }>(table: Table<T>) {
-    console.log('GEARSET SYNC SYNC()')
+    console.log('SKILLSET SYNC SYNC()')
     effect(() => {
       this.handleSync(table, this.supabase.session())
 
@@ -107,7 +107,7 @@ export class GearsetSyncService extends SyncService {
         // Handle case where only local row exists
         return this.supabase.handle
           .from(name)
-          .insert({ ...(local as any as TablesInsert<'gearsets'>), user_id: this.getUser().id })
+          .insert({ ...(local as any as TablesInsert<'skillsets'>), user_id: this.getUser().id })
       } else {
         // Handle case where both local and remote rows exist
         if (!('updated_at' in local)) return new Promise(() => {})
@@ -119,7 +119,7 @@ export class GearsetSyncService extends SyncService {
           console.log('LOCAL IS AHEAD OF REMOTE')
           return this.supabase.handle
             .from(name)
-            .update(local as TablesUpdate<'gearsets'>)
+            .update(local as TablesUpdate<'skillsets'>)
             .eq('id', local.id)
         } else if (localDate < remoteDate) {
           console.log('REMOTE IS AHEAD OF LOCAL')
@@ -136,34 +136,34 @@ export class GearsetSyncService extends SyncService {
   }
 
   async onUpdate<T extends AppDbRecord>(record: Partial<T>) {
+    console.log('SKILLSET SUPABASE UPDATE CALL')
     const user_id = this.getUser()?.id
     if (!user_id) return
 
-    console.log('GEARSET SUPABASE UPDATE CALL')
     const { error, status, data } = await this.supabase.handle
       .from(this.name)
-      .upsert({ ...(record as any as TablesInsert<'gearsets'>), user_id })
+      .upsert({ ...(record as any as TablesInsert<'skillsets'>), user_id })
       .select()
 
     if (error) {
       console.log(error, status)
       return
     }
-    console.log('GEARSET UPDATED:', data)
+    console.log('SKILLSET UPDATED:', data)
   }
 
   async onDelete(id: string | string[]) {
     const user_id = this.getUser()?.id
     if (!user_id) return
 
-    console.log('GEARSET SUPABASE DELETE CALL')
+    console.log('SKILLSET SUPABASE DELETE CALL')
     const { error, count } = await this.supabase.handle.from(this.name).delete({ count: 'estimated' }).eq('id', id)
 
     if (error) {
       console.log(error)
       return
     }
-    console.log('GEARSET DELTE COUNT:', count)
+    console.log('SKILLSET DELTE COUNT:', count)
   }
 
   async onInsert<T extends AppDbRecord>(record: Partial<T>) {
@@ -172,12 +172,12 @@ export class GearsetSyncService extends SyncService {
 
     const { data, error } = await this.supabase.handle
       .from(this.name)
-      .insert({ ...(record as any as TablesInsert<'gearsets'>), user_id: this.getUser().id })
+      .insert({ ...(record as any as TablesInsert<'skillsets'>), user_id: this.getUser().id })
       .select()
     if (error) {
       console.log(error)
       return
     }
-    console.log('GEARSET CREATED:', data)
+    console.log('SKILLSET CREATED:', data)
   }
 }

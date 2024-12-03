@@ -62,7 +62,7 @@ export class ShareComponent {
             id: null,
             name: name,
           }
-          return this.skillsDb.create(record)
+          return this.skillsDb.insert(record)
         }),
       )
       .subscribe({

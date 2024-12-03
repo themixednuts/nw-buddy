@@ -48,7 +48,7 @@ export type Database = {
           slots: Json | null
           tags: Json | null
           updated_at: string | null
-          user_id: string | null
+          user_id: string
           visibility: Database["public"]["Enums"]["visibility"] | null
         }
         Insert: {
@@ -64,7 +64,7 @@ export type Database = {
           slots?: Json | null
           tags?: Json | null
           updated_at?: string | null
-          user_id?: string | null
+          user_id: string
           visibility?: Database["public"]["Enums"]["visibility"] | null
         }
         Update: {
@@ -80,7 +80,7 @@ export type Database = {
           slots?: Json | null
           tags?: Json | null
           updated_at?: string | null
-          user_id?: string | null
+          user_id?: string
           visibility?: Database["public"]["Enums"]["visibility"] | null
         }
         Relationships: []
@@ -109,6 +109,60 @@ export type Database = {
           id?: string
           updated_at?: string | null
           username?: string
+        }
+        Relationships: []
+      }
+      skillsets: {
+        Row: {
+          attrs: Json | null
+          created_at: string | null
+          deleted_at: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          likes: number | null
+          name: string
+          tags: Json | null
+          tree1: Json
+          tree2: Json
+          updated_at: string | null
+          user_id: string
+          visibility: Database["public"]["Enums"]["visibility"] | null
+          weapon: string
+        }
+        Insert: {
+          attrs?: Json | null
+          created_at?: string | null
+          deleted_at?: string | null
+          description?: string | null
+          id: string
+          image_url?: string | null
+          likes?: number | null
+          name: string
+          tags?: Json | null
+          tree1: Json
+          tree2: Json
+          updated_at?: string | null
+          user_id: string
+          visibility?: Database["public"]["Enums"]["visibility"] | null
+          weapon: string
+        }
+        Update: {
+          attrs?: Json | null
+          created_at?: string | null
+          deleted_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          likes?: number | null
+          name?: string
+          tags?: Json | null
+          tree1?: Json
+          tree2?: Json
+          updated_at?: string | null
+          user_id?: string
+          visibility?: Database["public"]["Enums"]["visibility"] | null
+          weapon?: string
         }
         Relationships: []
       }

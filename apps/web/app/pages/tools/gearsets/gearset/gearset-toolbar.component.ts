@@ -129,7 +129,7 @@ export class GearsetToolbarComponent {
     private itemsDb: ItemInstancesDB,
     private imagesDb: ImagesDB,
     private modal: ModalService,
-    private platform: PlatformService
+    private platform: PlatformService,
   ) {
     patchState(this.store, {
       showCalculator: this.calcQueryParam.value() === 'true',
@@ -154,7 +154,7 @@ export class GearsetToolbarComponent {
       .result$.pipe(filter((it) => !!it))
       .pipe(
         switchMap((newName) => {
-          return this.gearDb.create({
+          return this.gearDb.insert({
             ...record,
             id: null,
             ipnsKey: null,
@@ -181,10 +181,10 @@ export class GearsetToolbarComponent {
       .result$.pipe(filter((it) => !!it))
       .subscribe(() => {
         if (record.imageId) {
-          this.imagesDb.destroy(record.imageId)
+          this.imagesDb.delete(record.imageId)
         }
         if (record.id) {
-          this.gearDb.destroy(record.id)
+          this.gearDb.delete(record.id)
         }
         this.router.navigate(['..'], { relativeTo: this.route })
       })
@@ -202,7 +202,7 @@ export class GearsetToolbarComponent {
     for (const [slot, it] of Object.entries(record.slots)) {
       if (typeof it === 'string') {
         record.slots[slot] = await this.itemsDb
-          .read(it)
+          .select(it)
           .then((it): ItemInstance => {
             return {
               gearScore: it.gearScore,

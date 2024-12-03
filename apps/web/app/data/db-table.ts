@@ -1,8 +1,9 @@
 import { Observable } from 'rxjs'
 import { AppDbRecord, AppDbTable } from './app-db'
+import { SyncService } from '~/sync/sync.service'
 
-export abstract class DBTable<T extends AppDbRecord> extends AppDbTable<T> {
-  public abstract readonly table: AppDbTable<T>
+export abstract class DBTable<T extends AppDbRecord, S extends SyncService = null> extends AppDbTable<T, S> {
+  public abstract readonly table: AppDbTable<T, S>
 
   public tx<R>(fn: () => Promise<R>): Promise<R> {
     return this.table.tx(fn)
@@ -20,24 +21,24 @@ export abstract class DBTable<T extends AppDbRecord> extends AppDbTable<T> {
     return this.table.list()
   }
 
-  public async create(record: Partial<T>) {
-    return this.table.create(record)
+  public async insert(record: Partial<T>) {
+    return this.table.insert(record)
   }
 
-  public async read(id: string) {
-    return this.table.read(id)
+  public async select(id: string) {
+    return this.table.select(id)
   }
 
   public async update(id: string, record: Partial<T>) {
     return this.table.update(id, record)
   }
 
-  public async destroy(id: string | string[]) {
-    return this.table.destroy(id)
+  public async delete(id: string | string[]) {
+    return this.table.delete(id)
   }
 
-  public async createOrUpdate(record: T) {
-    return this.table.createOrUpdate(record)
+  public async upsert(record: T) {
+    return this.table.upsert(record)
   }
 
   public observeAll() {

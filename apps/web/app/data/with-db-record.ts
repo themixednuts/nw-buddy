@@ -3,6 +3,7 @@ import { patchState, signalStoreFeature, withComputed, withMethods, withState } 
 import { rxMethod } from '@ngrx/signals/rxjs-interop'
 import { map, pipe, switchMap, tap } from 'rxjs'
 import { DBTable } from './db-table'
+import { SyncService } from '~/sync/sync.service'
 
 export interface WithDbRecordState<T extends { id: string }> {
   record: T
@@ -10,7 +11,7 @@ export interface WithDbRecordState<T extends { id: string }> {
   recordIsReadonly: boolean
 }
 
-export function withDbRecord<T extends { id: string }>(table: Type<DBTable<T>>) {
+export function withDbRecord<T extends { id: string }, S extends SyncService = null>(table: Type<DBTable<T, S>>) {
   return signalStoreFeature(
     withState<WithDbRecordState<T>>({
       record: null,
@@ -53,7 +54,7 @@ export function withDbRecord<T extends { id: string }>(table: Type<DBTable<T>>) 
           if (state.recordIsReadonly()) {
             throw new Error('Record is not editable')
           }
-          await db.destroy(state.recordId())
+          await db.delete(state.recordId())
         },
       }
     }),

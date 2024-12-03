@@ -105,7 +105,7 @@ export class GearsetFormComponent {
       .result$.pipe(filter((it) => !!it))
       .pipe(
         switchMap((newName) => {
-          return this.gearDb.create({
+          return this.gearDb.insert({
             id: null,
             name: newName,
             slots: {},

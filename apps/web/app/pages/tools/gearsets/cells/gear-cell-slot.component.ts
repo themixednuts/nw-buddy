@@ -238,7 +238,7 @@ export class GearCellSlotComponent {
     })
       .result$.pipe(filter((it) => !!it))
       .subscribe(async () => {
-        const instance = await this.itemDb.create({
+        const instance = await this.itemDb.insert({
           gearScore: record.gearScore,
           itemId: record.itemId,
           perks: record.perks,

@@ -216,7 +216,7 @@ export class SkillBuildsDetailComponent {
       .result$.pipe(filter((it) => !!it))
       .pipe(
         switchMap((name) => {
-          return this.db.create({
+          return this.db.insert({
             ...cloneRecord(this.record),
             id: null,
             name: name,

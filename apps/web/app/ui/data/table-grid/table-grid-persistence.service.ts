@@ -39,9 +39,9 @@ export class TableGridPersistenceService {
     if (!key || !api) {
       return
     }
-    const current = await this.storage.read(key).catch(() => null as TableStateRecord)
+    const current = await this.storage.select(key).catch(() => null as TableStateRecord)
     await this.storage
-      .createOrUpdate({
+      .upsert({
         pinnedBottom: null,
         pinnedTop: null,
         ...(current || {}),
@@ -75,7 +75,7 @@ export class TableGridPersistenceService {
       return
     }
 
-    const current = await this.storage.read(key).catch(() => null as TableStateRecord)
+    const current = await this.storage.select(key).catch(() => null as TableStateRecord)
     const data = state ?? current?.columns
     if (data) {
       api.applyColumnState({ state: data, applyOrder: true })
@@ -98,7 +98,7 @@ export class TableGridPersistenceService {
     if (!key || !api || !identify) {
       return
     }
-    const state = await this.storage.read(key).catch(() => null as TableStateRecord)
+    const state = await this.storage.select(key).catch(() => null as TableStateRecord)
     const pinnedTop = resolvePinnedData(api, state?.pinnedTop, identify) || []
     const pinnedBottom = resolvePinnedData(api, state?.pinnedBottom, identify) || []
     api.updateGridOptions({
@@ -112,10 +112,10 @@ export class TableGridPersistenceService {
       return
     }
 
-    const state = await this.storage.read(key).catch(() => null as TableStateRecord)
+    const state = await this.storage.select(key).catch(() => null as TableStateRecord)
     const pinnedTop = gridGetPinnedTopData(api)?.map(identify)
     const pinnedBottom = gridGetPinnedBottomData(api)?.map(identify)
-    this.storage.createOrUpdate({
+    this.storage.upsert({
       columns: null,
       ...(state || {}),
       id: key,
@@ -129,7 +129,7 @@ export class TableGridPersistenceService {
   }
   private fromQueryParams() {
     const param = this.getQueryParam()
-    const state = decompressQueryParam<{ columns: any, filter: any }>(param)
+    const state = decompressQueryParam<{ columns: any; filter: any }>(param)
     return {
       columns: state?.columns as ColumnState[],
       filter: state?.filter,

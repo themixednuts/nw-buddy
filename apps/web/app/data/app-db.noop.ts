@@ -1,6 +1,7 @@
 import { of, Observable as RxObservable } from 'rxjs'
 
 import { AppDb, AppDbTable } from './app-db'
+import { SyncService } from '~/sync/sync.service'
 
 export class AppDbNoop extends AppDb {
   private tables: Record<string, AppDbNoopTable<any>> = {}
@@ -19,7 +20,7 @@ export class AppDbNoop extends AppDb {
   }
 }
 
-export class AppDbNoopTable<T extends { id: string }> extends AppDbTable<T> {
+export class AppDbNoopTable<T extends { id: string }, S extends SyncService = null> extends AppDbTable<T, S> {
   public db: AppDb
 
   public constructor(db: AppDb, name: string) {
@@ -43,11 +44,11 @@ export class AppDbNoopTable<T extends { id: string }> extends AppDbTable<T> {
     return []
   }
 
-  public async create(record: Partial<T>): Promise<T> {
+  public async insert(record: Partial<T>): Promise<T> {
     return null
   }
 
-  public async read(id: string): Promise<T> {
+  public async select(id: string): Promise<T> {
     return null
   }
 
@@ -55,11 +56,11 @@ export class AppDbNoopTable<T extends { id: string }> extends AppDbTable<T> {
     return null
   }
 
-  public async destroy(id: string | string[]): Promise<void> {
+  public async delete(id: string | string[]): Promise<void> {
     //
   }
 
-  public async createOrUpdate(record: T): Promise<T> {
+  public async upsert(record: T): Promise<T> {
     return null
   }
 

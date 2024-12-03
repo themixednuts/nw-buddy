@@ -1,5 +1,5 @@
 import { Dexie, liveQuery, PromiseExtended, Table } from 'dexie'
-import { customAlphabet } from 'nanoid/non-secure'
+import { nanoid } from 'nanoid/non-secure'
 import { defer, isObservable, of, Observable as RxObservable, switchMap } from 'rxjs'
 
 import { AppDb, AppDbTable } from './app-db'
@@ -15,7 +15,7 @@ import {
 import { SyncService } from '~/sync/sync.service'
 
 export class AppDbDexie extends AppDb {
-  private tables: Record<string, AppDbDexieTable<any>> = {}
+  private tables: Record<string, AppDbDexieTable<any, any>> = {}
   public readonly dexie: Dexie
   public constructor(name: string) {
     super()
@@ -57,17 +57,15 @@ export class AppDbDexie extends AppDb {
 
 // https://github.com/ai/nanoid
 // https://zelark.github.io/nano-id-cc/
-const createId = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz-_', 16)
-
-export class AppDbDexieTable<T extends { id: string }> extends AppDbTable<T> {
+const createId = nanoid
+export class AppDbDexieTable<T extends { id: string }, S extends SyncService = null> extends AppDbTable<T, S> {
   public db: AppDbDexie
   private table: Table<T>
-  private sync = new SyncService()
+
   public constructor(db: AppDbDexie, name: string) {
     super()
     this.db = db
     this.table = db.dexie.table(name)
-    this.sync.sync(this.table)
   }
 
   public async tx<R>(fn: () => Promise<R>): Promise<R> {
@@ -89,7 +87,7 @@ export class AppDbDexieTable<T extends { id: string }> extends AppDbTable<T> {
     return this.table.toArray()
   }
 
-  public async create(record: Partial<T>): Promise<T> {
+  public async insert(record: Partial<T>): Promise<T> {
     const now = new Date()
     record = {
       ...record,
@@ -98,36 +96,37 @@ export class AppDbDexieTable<T extends { id: string }> extends AppDbTable<T> {
       updated_at: now,
     }
     const id = await this.table.add(record as T, record.id)
-    await this.sync.onInsert(this.table.name, record)
-    return this.read(id as any)
+    await this.sync?.onInsert(record)
+    return this.select(id as any)
   }
 
-  public read(id: string): Promise<T> {
+  public select(id: string): Promise<T> {
     return this.table.get(id)
   }
 
   public async update(id: string, record: Partial<T>): Promise<T> {
+    console.log('UPDATING')
     const now = new Date()
     record = {
       ...record,
       updated_at: now,
     }
-    await this.sync.onUpdate(this.table.name, record)
+    this.sync?.onUpdate(record)
     await this.table.update(id, record)
-    return this.read(id)
+    return this.select(id)
   }
 
-  public async destroy(id: string | string[]): Promise<void> {
-    await this.sync.onDelete(this.table.name, id)
+  public async delete(id: string | string[]): Promise<void> {
+    this.sync?.onDelete(id)
     return this.table.delete(id)
   }
 
-  public async createOrUpdate(record: T): Promise<T> {
+  public async upsert(record: T): Promise<T> {
+    console.log('UPSERTING')
     if (record.id) {
-      await this.table.put(record, record.id)
-      return this.read(record.id)
+      return this.update(record.id, record)
     }
-    return this.create(record)
+    return this.insert(record)
   }
 
   public live<R>(fn: (tbale: Table<T>) => PromiseExtended<R>) {

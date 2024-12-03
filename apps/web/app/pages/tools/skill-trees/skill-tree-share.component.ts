@@ -52,7 +52,7 @@ export class SkillBuildsShareComponent {
       .result$.pipe(filter((it) => !!it))
       .pipe(
         switchMap((name) => {
-          return this.db.create({
+          return this.db.insert({
             ...record,
             name: name,
           })

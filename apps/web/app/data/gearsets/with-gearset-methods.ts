@@ -44,14 +44,14 @@ export function withGearsetMethods() {
           const instance = gearset().slots?.[slot] || null
           if (typeof instance === 'string') {
             // patch the item instance
-            const data = await itemDB.read(instance)
+            const data = await itemDB.select(instance)
             await itemDB.update(instance, {
               ...data,
               ...patchValue,
               perks: {
                 ...(data.perks || {}),
                 ...(patchValue.perks || {}),
-              }
+              },
             })
             return
           }
@@ -64,7 +64,7 @@ export function withGearsetMethods() {
             perks: {
               ...(instance?.perks || {}),
               ...(patchValue?.perks || {}),
-            }
+            },
           }
           gearDB.update(record.id, record)
         },
@@ -102,7 +102,7 @@ export function withGearsetMethods() {
           })
         },
         destroyGearset() {
-          return gearDB.destroy(gearset().id)
+          return gearDB.delete(gearset().id)
         },
       }
     }),
@@ -125,9 +125,9 @@ export function withGearsetMethods() {
           const oldId = gearset.imageId
           const result = await imagesDb.tx(async () => {
             if (oldId) {
-              await imagesDb.destroy(oldId)
+              await imagesDb.delete(oldId)
             }
-            return imagesDb.create({
+            return imagesDb.insert({
               id: null,
               type: file.type,
               data: buffer,
@@ -196,7 +196,7 @@ function decodeSlot(slot: string | ItemInstance) {
 async function resolveSlot(gearset: GearsetRecord, slot: EquipSlotId, itemDB: ItemInstancesDB) {
   const instanceOrId = gearset.slots?.[slot]
   const instanceId = typeof instanceOrId === 'string' ? instanceOrId : null
-  const instance = instanceId ? await itemDB.read(instanceId) : null
+  const instance = instanceId ? await itemDB.select(instanceId) : null
   return {
     instanceId,
     instance,
